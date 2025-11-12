@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <div class="add-item-block">
+    <h2>Items</h2>
+
+    <h3>Add item</h3>
+    <form action="/items" method="post">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="number" name="owner_id" placeholder="Owner ID" required>
+        <button type="submit">Add</button>
+    </form>
+    </div>
+    <h3>Existing items</h3>
+    <table class="compact-table">
+        <tr>
+            <th>ID</th><th>Name</th><th>Description</th><th>Owner</th><th>Actions</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+            <td>{{ item[3] }}</td>
+            <td>
+                <form action="/items/update" method="post" class="inline">
+                    <input type="hidden" name="item_id" value="{{ item[0] }}">
+                    <input type="text" name="name" placeholder="New Name">
+                    <input type="text" name="description" placeholder="New Desc">
+                    <button type="submit">Update</button>
+                </form>
+
+                <form action="/items/delete" method="post" class="inline">
+                    <input type="hidden" name="item_id" value="{{ item[0] }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="home-btn">
+        <a href="/">Home</a>
+    </div>
+
+</div>
+
+</body>
+</html>
