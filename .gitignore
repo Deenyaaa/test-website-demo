@@ -25,3 +25,8 @@ env/
 
 # Byte-compiled
 __pycache__/
+
+# Databases
+*.db
+*.sqlite3
+*.sqlite
