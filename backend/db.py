@@ -11,7 +11,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            user_hash TEXT
         )
     """)
     c.execute("""
@@ -25,6 +26,7 @@ def init_db():
     """)
     conn.commit()
 
+
 # === Users ===
 def create_user(username: str, password: str) -> Optional[int]:
     try:
@@ -34,8 +36,18 @@ def create_user(username: str, password: str) -> Optional[int]:
     except sqlite3.IntegrityError:
         return None
 
-def get_user(username: str, password: str) -> Optional[int]:
+def get_user(username: str, password: str) -> int | None:
     c.execute("SELECT id FROM users WHERE username=? AND password=?", (username, password))
+    row = c.fetchone()
+    return row[0] if row else None
+
+def get_user_by_username(username:str) -> int | None:
+    c.execute("SELECT id FROM users WHERE username=?", (username,))
+    row = c.fetchone()
+    return row[0] if row else None
+
+def get_user_hash(username: str, password: str) -> int | None:
+    c.execute("SELECT hash FROM users WHERE username=? AND password=?", (username, password))
     row = c.fetchone()
     return row[0] if row else None
 
