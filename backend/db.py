@@ -46,8 +46,13 @@ def get_user_by_username(username:str) -> int | None:
     row = c.fetchone()
     return row[0] if row else None
 
-def get_user_hash(username: str, password: str) -> int | None:
+def get_user_hash(username: str, password: str) -> str | None:
     c.execute("SELECT hash FROM users WHERE username=? AND password=?", (username, password))
+    row = c.fetchone()
+    return row[0] if row else None
+
+def get_user_id_by_hash(user_hash:str) -> int | None:
+    c.execute("SELECT id FROM users WHERE user_hash=?", (user_hash,))
     row = c.fetchone()
     return row[0] if row else None
 

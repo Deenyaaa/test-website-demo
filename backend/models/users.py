@@ -13,4 +13,4 @@ class LoginRequest(BaseModel):
 
 class LoginResponse(BaseModel):
     user_id: int
-    user_hash: int
+    user_hash: str
