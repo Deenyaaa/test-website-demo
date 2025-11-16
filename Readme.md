@@ -50,6 +50,7 @@ test-website-demo/
 │  ├─ db.py           # Подключение к SQLite
 │  └─ templates/      # HTML страницы
 ├─ static/            # CSS и JS
+├─ docs/              # Документация для swagger
 ├─ test.db            # SQLite база данных (создаётся автоматически)
 ├─ requirements.txt
 └─ README.md
