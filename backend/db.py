@@ -1,9 +1,13 @@
 import sqlite3
-from typing import List, Optional, Tuple
+from typing import List, Tuple
+from uuid import uuid4
 
 # === Connect to DB ===
 conn = sqlite3.connect("test.db", check_same_thread=False)
 c = conn.cursor()
+
+def _generate_user_hash() -> str:
+    return uuid4().hex
 
 # === Init tables ===
 def init_db():
@@ -11,7 +15,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            user_hash TEXT
         )
     """)
     c.execute("""
@@ -25,22 +30,42 @@ def init_db():
     """)
     conn.commit()
 
+
 # === Users ===
-def create_user(username: str, password: str) -> Optional[int]:
+def create_user(username: str, password: str) -> int | None:
     try:
-        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+        user_hash = _generate_user_hash()
+        c.execute(
+            "INSERT INTO users (username, password, user_hash) VALUES (?, ?, ?)",
+            (username, password, user_hash),
+        )
         conn.commit()
         return c.lastrowid
     except sqlite3.IntegrityError:
         return None
 
-def get_user(username: str, password: str) -> Optional[int]:
+def get_user_id(username: str, password: str) -> int | None:
     c.execute("SELECT id FROM users WHERE username=? AND password=?", (username, password))
     row = c.fetchone()
     return row[0] if row else None
 
+def get_user_id_by_username(username:str) -> int | None:
+    c.execute("SELECT id FROM users WHERE username=?", (username,))
+    row = c.fetchone()
+    return row[0] if row else None
+
+def get_user_hash(username: str, password: str) -> str | None:
+    c.execute("SELECT user_hash FROM users WHERE username=? AND password=?", (username, password))
+    row = c.fetchone()
+    return row[0] if row else None
+
+def get_user_id_by_hash(user_hash:str) -> int | None:
+    c.execute("SELECT id FROM users WHERE user_hash=?", (user_hash,))
+    row = c.fetchone()
+    return row[0] if row else None
+
 # === Items ===
-def get_items() -> List[Tuple[int, str, str, int]]:
+def get_items_list() -> List[Tuple[int, str, str, int]]:
     c.execute("SELECT id, name, description, owner_id FROM items")
     return c.fetchall()
 
