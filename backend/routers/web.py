@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from backend.db import create_user, get_user, add_item, update_item, delete_item, get_items
+from backend.db import create_user, get_user_id, add_item, update_item, delete_item, get_items_list
 
 router = APIRouter()
 templates = Jinja2Templates(directory="backend/templates")
@@ -22,7 +22,7 @@ def login_page(request: Request):
 
 @router.get("/dashboard", response_class=HTMLResponse)
 def dashboard(request: Request):
-    items = get_items()
+    items = get_items_list()
     return templates.TemplateResponse("dashboard.html", {"request": request, "items": items})
 
 # === Web Forms Routes ===
@@ -35,7 +35,7 @@ def register_user(username: str = Form(...), password: str = Form(...)):
 
 @router.post("/login")
 def login_user(username: str = Form(...), password: str = Form(...)):
-    user = get_user(username, password)
+    user = get_user_id(username, password)
     if not user:
         raise HTTPException(status_code=400, detail="Invalid credentials")
     return RedirectResponse(url=f"/dashboard?user_id={user}", status_code=303)

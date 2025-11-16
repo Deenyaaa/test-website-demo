@@ -1,9 +1,13 @@
 import sqlite3
 from typing import List, Tuple
+from uuid import uuid4
 
 # === Connect to DB ===
 conn = sqlite3.connect("test.db", check_same_thread=False)
 c = conn.cursor()
+
+def _generate_user_hash() -> str:
+    return uuid4().hex
 
 # === Init tables ===
 def init_db():
@@ -30,7 +34,11 @@ def init_db():
 # === Users ===
 def create_user(username: str, password: str) -> int | None:
     try:
-        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+        user_hash = _generate_user_hash()
+        c.execute(
+            "INSERT INTO users (username, password, user_hash) VALUES (?, ?, ?)",
+            (username, password, user_hash),
+        )
         conn.commit()
         return c.lastrowid
     except sqlite3.IntegrityError:
