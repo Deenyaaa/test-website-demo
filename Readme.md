@@ -43,7 +43,10 @@ python-multipart
 test-website-demo/
 ├─ backend/
 │  ├─ main.py         # FastAPI приложение
-│  ├─ models.py       # Pydantic модели
+│  ├─ models/         # Pydantic модели
+│  │  ├─ items.py
+│  │  ├─ shared.py
+│  │  └─ users.py
 │  ├─ db.py           # Подключение к SQLite
 │  └─ templates/      # HTML страницы
 ├─ static/            # CSS и JS
