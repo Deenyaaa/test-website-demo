@@ -1,5 +1,6 @@
 from backend.models.shared import ErrorResponse
 
+
 already_register_responses = {
     400: {
         "model": ErrorResponse,
@@ -7,7 +8,7 @@ already_register_responses = {
     }
 }
 
-incorrect_creditionals = {
+incorrect_credentials = {
     401: {
         "model": ErrorResponse,
         "detail": "Incorrect login or password",
