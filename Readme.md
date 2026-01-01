@@ -84,7 +84,7 @@ docker build -t fastapi-app .
 ```
 3. Запустите Docker-образ
 ```bash
-docker run -d -p 8000:8000 fastapi-app
+docker run -d -p 9000:9000 fastapi-app
 ```
 
 ### Windows
@@ -114,7 +114,7 @@ uvicorn backend.main:app --reload
 4. Откройте браузер:
 
 ```
-http://127.0.0.1:8000/
+http://127.0.0.1:9000/
 ```
 
 ---
@@ -146,13 +146,13 @@ python init_db.py
 4. Запустите сервер (для доступа извне укажите `--host 0.0.0.0`):
 
 ```bash
-uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 9000
 ```
 
 5. На VPS откройте порт 8000 в фаерволе, затем доступно по IP сервера:
 
 ```
-http://<VPS_IP>:8000/
+http://<VPS_IP>:9000/
 ```
 
 ---
