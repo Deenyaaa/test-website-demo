@@ -96,7 +96,7 @@ python -m venv envname
 2. Активируйте виртуальное окружение:
 
 ```cmd
-.venv\Scripts\activate
+.venv\Scripts\activate.ps1
 ```
 
 2. Установите зависимости:

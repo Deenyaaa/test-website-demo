@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}App{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <div class="header-logo">
+            <a href="/dashboard">
+                <img src="/static/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+                <span class="logo-text">MyApp</span>
+            </a>
+        </div>
+        {% if current_user %}
+        <div class="header-user" id="headerUser">
+            <div class="avatar">{{ current_user.username[0] | upper }}</div>
+            <span class="username-label">{{ current_user.username }}</span>
+            <div class="dropdown" id="userDropdown">
+                <a href="/profile">Профиль</a>
+                <a href="/logout">Log out</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <span class="footer-left">Создано в рамках портфолио: <a href="https://github.com/Deenyaaa" target="_blank" rel="noopener">github.com/Deenyaaa</a></span>
+        <span class="footer-right">© <span id="utcTime"></span> UTC</span>
+    </div>
+</footer>
+
+<script>
+    var headerUser = document.getElementById('headerUser');
+    if (headerUser) {
+        headerUser.addEventListener('click', function (e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('open');
+        });
+        document.addEventListener('click', function () {
+            document.getElementById('userDropdown').classList.remove('open');
+        });
+    }
+
+    function updateUTC() {
+        var now = new Date();
+        var h = String(now.getUTCHours()).padStart(2, '0');
+        var m = String(now.getUTCMinutes()).padStart(2, '0');
+        var s = String(now.getUTCSeconds()).padStart(2, '0');
+        var el = document.getElementById('utcTime');
+        if (el) el.textContent = h + ':' + m + ':' + s;
+    }
+    updateUTC();
+    setInterval(updateUTC, 1000);
+</script>
+
+</body>
+</html>
