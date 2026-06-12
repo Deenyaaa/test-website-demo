@@ -55,11 +55,11 @@ def register_user(payload: user_models.RegisterRequest):
              "Принимает на вход username и password и возвращает user_hash",
              tags=["Users"])
 def login(payload: user_models.LoginRequest):
-    user_id = db.get_user_id(payload.username, payload.password)
-    if user_id is None:
+    credentials = db.get_user_credentials(payload.username, payload.password)
+    if credentials is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect login or password")
 
-    user_hash = db.get_user_hash(payload.username, payload.password)
+    user_id, user_hash = credentials
     return user_models.LoginResponse(user_id=user_id, user_hash=user_hash)
 
 
@@ -78,8 +78,8 @@ def get_items_list(_: int = Depends(get_current_user_id)):
              summary="Добавление нового items в систему",
              description="Принимает в теле запроса name, description и owner_id и возвращает item_id в случае успешного добавления",
              tags=["Items"])
-def api_create_item(payload: item_models.ItemCreateRequest, _: int = Depends(get_current_user_id)):
-    item_id = db.add_item(payload.name, payload.description, payload.owner_id)
+def api_create_item(payload: item_models.ItemCreateRequest, current_user_id: int = Depends(get_current_user_id)):
+    item_id = db.add_item(payload.name, payload.description, current_user_id)
     return item_models.ItemResponse(item_id=item_id)
 
 
@@ -98,5 +98,5 @@ def api_update_item(payload: item_models.ItemUpdateRequest, _: int = Depends(get
              tags=["Items"])
 def api_delete_item(payload: item_models.ItemDeleteRequest, _: int = Depends(get_current_user_id)):
     db.delete_item(payload.item_id)
-    items_list = db.get_items()
+    items_list = db.get_items_list()
     return item_models.ItemsListResponse(items=items_list)

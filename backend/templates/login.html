@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
 <div class="form-box">
     <h2>Login</h2>
     <form action="/login" method="post">
@@ -14,5 +10,4 @@
     </form>
     <a href="/register">Create account</a>
 </div>
-</body>
-</html>
+{% endblock %}

@@ -1,24 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
 <div class="dashboard-container">
 
     <div class="add-item-block">
-    <h2>Items</h2>
-
-    <h3>Add item</h3>
-    <form action="/items" method="post">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="description" placeholder="Description" required>
-        <input type="number" name="owner_id" placeholder="Owner ID" required>
-        <button type="submit">Add</button>
-    </form>
+        <h2>Items</h2>
+        <h3>Add item</h3>
+        <form action="/items" method="post">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="description" placeholder="Description" required>
+            <input type="number" name="owner_id" placeholder="Owner ID" required>
+            <button type="submit">Add</button>
+        </form>
     </div>
+
     <h3>Existing items</h3>
     <table class="compact-table">
         <tr>
@@ -37,7 +32,6 @@
                     <input type="text" name="description" placeholder="New Desc">
                     <button type="submit">Update</button>
                 </form>
-
                 <form action="/items/delete" method="post" class="inline">
                     <input type="hidden" name="item_id" value="{{ item[0] }}">
                     <button type="submit">Delete</button>
@@ -46,11 +40,6 @@
         </tr>
         {% endfor %}
     </table>
-    <div class="home-btn">
-        <a href="/">Home</a>
-    </div>
 
 </div>
-
-</body>
-</html>
+{% endblock %}
