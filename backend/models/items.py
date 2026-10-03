@@ -19,7 +19,6 @@ class ItemResponse(BaseModel):
 class ItemCreateRequest(BaseModel):
     name: str
     description: str
-    owner_id: str
 
 
 class ItemUpdateRequest(BaseModel):

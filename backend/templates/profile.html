@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<div class="profile-page">
+
+    <div class="profile-avatar-wrap" id="avatarWrap" title="Сменить фото">
+        {% if current_user.avatar %}
+        <img src="{{ current_user.avatar }}" class="profile-avatar-img" id="avatarImg" alt="avatar">
+        {% else %}
+        <div class="profile-avatar" id="avatarLetter">{{ current_user.username[0] | upper }}</div>
+        {% endif %}
+        <div class="avatar-overlay">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+        </div>
+        <div class="avatar-spinner" id="avatarSpinner" style="display:none">
+            <div class="spinner-ring"></div>
+        </div>
+        <input type="file" id="avatarInput" accept=".png,.jpg,.jpeg" style="display:none">
+    </div>
+
+    <div class="profile-name">{{ current_user.username }}</div>
+    <div class="profile-date">Зарегистрирован: {{ current_user.created_at }} UTC</div>
+
+    <button class="btn btn-outline" id="changePassBtn" onclick="togglePassForm()">Изменить пароль</button>
+
+    <form class="change-pass-form" id="changePassForm" style="display:none" onsubmit="submitChangePass(event)">
+        <input type="password" name="old_password" placeholder="Текущий пароль" required>
+        <div class="field-error" id="oldPassError"></div>
+        <input type="password" name="new_password" id="newPass" placeholder="Новый пароль" required>
+        <input type="password" name="confirm_password" id="confirmPass" placeholder="Повторите новый пароль" required>
+        <div class="field-error" id="confirmError"></div>
+        <button type="submit">Сохранить</button>
+    </form>
+    <div id="passSuccess" class="field-success" style="display:none">Пароль успешно изменён</div>
+
+</div>
+
+<script>
+    document.getElementById('avatarWrap').addEventListener('click', function () {
+        document.getElementById('avatarInput').click();
+    });
+
+    document.getElementById('avatarInput').addEventListener('change', async function () {
+        var file = this.files[0];
+        if (!file) return;
+        var spinner = document.getElementById('avatarSpinner');
+        spinner.style.display = 'flex';
+        var formData = new FormData();
+        formData.append('avatar', file);
+        try {
+            var res = await fetch('/profile/upload-avatar', {method: 'POST', body: formData});
+            var data = await res.json();
+            if (data.avatar_url) {
+                var url = data.avatar_url + '?v=' + Date.now();
+                var wrap = document.getElementById('avatarWrap');
+                var letter = document.getElementById('avatarLetter');
+                var img = document.getElementById('avatarImg');
+                if (img) {
+                    img.src = url;
+                } else {
+                    var newImg = document.createElement('img');
+                    newImg.src = url;
+                    newImg.className = 'profile-avatar-img';
+                    newImg.id = 'avatarImg';
+                    newImg.alt = 'avatar';
+                    if (letter) letter.replaceWith(newImg);
+                }
+            } else {
+                alert(data.error || 'Ошибка загрузки');
+            }
+        } catch (e) {
+            alert('Ошибка загрузки');
+        } finally {
+            spinner.style.display = 'none';
+        }
+    });
+
+    function togglePassForm() {
+        var form = document.getElementById('changePassForm');
+        var success = document.getElementById('passSuccess');
+        success.style.display = 'none';
+        document.getElementById('oldPassError').textContent = '';
+        document.getElementById('confirmError').textContent = '';
+        form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    async function submitChangePass(e) {
+        e.preventDefault();
+        var oldPassError = document.getElementById('oldPassError');
+        var confirmError = document.getElementById('confirmError');
+        oldPassError.textContent = '';
+        confirmError.textContent = '';
+
+        var newPass = document.getElementById('newPass').value;
+        var confirmPass = document.getElementById('confirmPass').value;
+        if (newPass !== confirmPass) {
+            confirmError.textContent = 'Пароли не совпадают';
+            return;
+        }
+
+        var formData = new FormData(e.target);
+        var res = await fetch('/profile/change-password', {method: 'POST', body: formData});
+        var data = await res.json();
+        if (data.error) {
+            oldPassError.textContent = data.error;
+        } else {
+            e.target.style.display = 'none';
+            e.target.reset();
+            var success = document.getElementById('passSuccess');
+            success.style.display = 'block';
+            setTimeout(function () { success.style.display = 'none'; }, 3000);
+        }
+    }
+</script>
+{% endblock %}

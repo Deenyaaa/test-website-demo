@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
 <div class="form-box">
     <h2>Register</h2>
     <form action="/register" method="post">
@@ -14,5 +10,4 @@
     </form>
     <a href="/login">Already have account? Login</a>
 </div>
-</body>
-</html>
+{% endblock %}
